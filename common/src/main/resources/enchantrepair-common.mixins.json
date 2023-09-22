@@ -1,0 +1,21 @@
+{
+  "required": true,
+  "package": "io.github.orlouge.enchantrepair.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "client": [
+  ],
+  "mixins": [
+    "AnvilScreenHandlerMixin",
+    "BookItemMixin",
+    "EnchantBookFactoryMixin",
+    "EnchantmentScreenHandlerMixin",
+    "ExperienceOrbEntityMixin",
+    "GrindstoneScreenHandlerMixin",
+    "PlayerEntityMixin",
+    "SellEnchantedToolFactory",
+    "ServerPlayerEntityMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

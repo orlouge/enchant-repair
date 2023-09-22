@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "id": "enchantrepair",
+  "version": "${version}",
+  "name": "Enchant & Repair",
+  "description": "",
+  "authors": [
+    "orlouge"
+  ],
+  "contact": {
+    "homepage": "https://github.com/orlouge",
+    "sources": "https://github.com/orlouge"
+  },
+  "license": "MIT",
+  "icon": "assets/enchantrepair/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "io.github.orlouge.enchantrepair.fabric.ExampleModFabric"
+    ]
+  },
+  "mixins": [
+    "enchantrepair.mixins.json",
+    "enchantrepair-common.mixins.json"
+  ],
+  "depends": {
+    "minecraft": ">=1.20"
+  }
+}
