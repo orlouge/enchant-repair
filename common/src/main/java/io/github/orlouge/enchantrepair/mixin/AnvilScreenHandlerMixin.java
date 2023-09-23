@@ -98,7 +98,7 @@ public abstract class AnvilScreenHandlerMixin extends ForgingScreenHandler {
                 this.savedSecondItem = item2.copy();
             } else if (Config.REPAIR_FAIL_CHANCE > 0) {
                 if (consumeChance > 0) failChance /= consumeChance;
-                if (hasMending) failChance *= 0.5;
+                if (hasMending) failChance *= 0.3;
                 failChance = Math.min(0.3f, failChance);
                 if (player.getRandom().nextFloat() < failChance) {
                     result.setDamage(result.getMaxDamage() - 1);
@@ -109,13 +109,13 @@ public abstract class AnvilScreenHandlerMixin extends ForgingScreenHandler {
             }
 
             float disenchantChance = 9f * Config.REPAIR_DISENCHANT_CHANCE / Math.max(1, player.experienceLevel * player.experienceLevel);
-            if (hasMending) disenchantChance *= 0.5;
+            if (hasMending) disenchantChance *= 0.3;
             if (failChance > 0) disenchantChance /= failChance;
             disenchantChance = Math.min(0.3f, disenchantChance);
             Map<Enchantment, Integer> enchantments = new LinkedHashMap<>(EnchantmentHelper.get(result));
             if (player.getRandom().nextFloat() < disenchantChance) {
                 ArrayList<Enchantment> choiceList = new ArrayList<>();
-                enchantments.forEach((ench, level) -> { if (!ench.isCursed()) for (int i = 0; i < level; i++) choiceList.add(ench);});
+                enchantments.forEach((ench, level) -> { if (!ench.isCursed() && !ench.isTreasure()) for (int i = 0; i < level; i++) choiceList.add(ench);});
                 if (choiceList.size() == 0) return;
                 Enchantment lost = choiceList.get(player.getRandom().nextInt(choiceList.size()));
                 int level = enchantments.get(lost);
