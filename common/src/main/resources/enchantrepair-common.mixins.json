@@ -11,6 +11,8 @@
     "EnchantmentScreenHandlerMixin",
     "ExperienceOrbEntityMixin",
     "GrindstoneScreenHandlerMixin",
+    "GrindstoneScreenHandlerMixin$ResultSlotMixin",
+    "GrindstoneScreenHandlerMixin$SecondSlotMixin",
     "PlayerEntityMixin",
     "SellEnchantedToolFactory",
     "ServerPlayerEntityMixin"

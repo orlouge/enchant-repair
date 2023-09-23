@@ -1,10 +1,11 @@
 {
   "required": true,
-  "package": "io.github.orlouge.enchantrepair.mixin.fabric",
+  "package": "io.github.orlouge.enchantrepair.fabric.mixin",
   "compatibilityLevel": "JAVA_17",
   "client": [
   ],
   "mixins": [
+    "GrindstoneScreenHandlerMixin"
   ],
   "injectors": {
     "defaultRequire": 1

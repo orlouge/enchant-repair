@@ -47,7 +47,8 @@ public abstract class AnvilScreenHandlerMixin extends ForgingScreenHandler {
         ItemStack input = this.input.getStack(0);
         ItemStack repair = this.input.getStack(1);
         boolean isRepairing = !repair.isEmpty();
-        boolean repairable = input.isDamageable() && input.getItem().canRepair(input, repair) && EnchantmentHelper.getLevel(Enchantments.VANISHING_CURSE, input) <= 0;
+        boolean nonDisposable = Config.REPAIR_VANISHING || EnchantmentHelper.getLevel(Enchantments.VANISHING_CURSE, input) <= 0;
+        boolean repairable = input.isDamageable() && input.getItem().canRepair(input, repair) && nonDisposable;
         boolean mergeable = (this.player.isCreative() && Config.ALLOW_CREATIVE_ANVIL_MERGE) || Config.ALLOW_SURVIVAL_ANVIL_MERGE;
         if (isRepairing && !repairable && !mergeable) {
             this.output.setStack(0, ItemStack.EMPTY);
@@ -63,7 +64,7 @@ public abstract class AnvilScreenHandlerMixin extends ForgingScreenHandler {
 
     @Redirect(method = "updateResult", at = @At(value = "INVOKE", target = "Ljava/lang/Math;min(II)I", ordinal = 0))
     public int calculateRepairAmount(int dmg, int maxDmg4) {
-        return dmg;
+        return Config.REPAIR_CHEAP ? dmg : Math.min(dmg, maxDmg4);
     }
 
     @Inject(method = "getNextCost", at = @At("HEAD"), cancellable = true)
@@ -96,7 +97,7 @@ public abstract class AnvilScreenHandlerMixin extends ForgingScreenHandler {
             if (player.getRandom().nextFloat() > consumeChance) {
                 this.savedSecondItem = item2.copy();
             } else if (Config.REPAIR_FAIL_CHANCE > 0) {
-                failChance /= consumeChance;
+                if (consumeChance > 0) failChance /= consumeChance;
                 if (hasMending) failChance *= 0.5;
                 failChance = Math.min(0.3f, failChance);
                 if (player.getRandom().nextFloat() < failChance) {
@@ -109,7 +110,7 @@ public abstract class AnvilScreenHandlerMixin extends ForgingScreenHandler {
 
             float disenchantChance = 9f * Config.REPAIR_DISENCHANT_CHANCE / Math.max(1, player.experienceLevel * player.experienceLevel);
             if (hasMending) disenchantChance *= 0.5;
-            disenchantChance /= failChance;
+            if (failChance > 0) disenchantChance /= failChance;
             disenchantChance = Math.min(0.3f, disenchantChance);
             Map<Enchantment, Integer> enchantments = new LinkedHashMap<>(EnchantmentHelper.get(result));
             if (player.getRandom().nextFloat() < disenchantChance) {

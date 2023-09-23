@@ -105,7 +105,7 @@ public class ModifiedEnchantingHelper {
 
     public record StoredBook(BlockPos bookshelfPos, int slot, Map<Enchantment, Integer> enchantments) {
         public boolean consume() {
-            return this.enchantments.keySet().stream().anyMatch(e -> e.equals(Enchantments.VANISHING_CURSE));
+            return this.enchantments.keySet().stream().anyMatch(e -> (Config.BOOK_ENCHANTMENT_CONSUME_VANISHING && e.equals(Enchantments.VANISHING_CURSE)) || (Config.BOOK_ENCHANTMENT_CONSUME_TREASURE && e.isTreasure()));
         }
     }
 }
