@@ -17,12 +17,10 @@ import net.minecraft.world.World;
 import java.util.*;
 
 public class ModifiedEnchantingHelper {
-    public static final double[] BOOK_CHANCE_PARAMETERS = new double[] {
-            3.18836164e+02, -1.57588029e+01,  2.31447236e+02,  8.51072518e-02,
-            -3.16729568e+02,  1.57731425e+01,  2.16140796e+02,  8.18513863e-02,
-            1.73438225e+03, -2.00192503e+01,  4.30404865e+00, -1.06927041e+00,
-            2.66221655e+03,  2.67876822e+03
-    };
+    public static final double BOOK_CHANCE_MEAN_INTERCEPT = 0;
+    public static final double BOOK_CHANCE_MEAN_SLOPE = 0.4;
+    public static final double BOOK_CHANCE_STD_INTERCEPT = 0.75;
+    public static final double BOOK_CHANCE_STD_SLOPE = 0.175;
 
     public static int randomEnchantmentLevelPenalty(int maxLevel, int playerLevel, Random random) {
         if (!Config.RANDOM_ENCHANTMENT_PENALTY) return 0;
@@ -30,13 +28,11 @@ public class ModifiedEnchantingHelper {
         return (int) Math.min(maxLevel / 2, Math.max(0, Math.round(random.nextGaussian() * Config.RANDOM_ENCHANTMENT_PENALTY_STDDEV + mean)));
     }
 
-    public static double bookApplyChancePerEnchantmentLevel(int cost, int playerLevel) {
-        double invCost = (double) 1 / Math.max(1, cost), prob = 0, level = playerLevel * Config.BOOK_ENCHANTMENT_LEVEL_FACTOR;
-        int i;
-        for (i = 0; i < BOOK_CHANCE_PARAMETERS.length - 2; i += 4) {
-            prob += level_logistic(invCost, level, BOOK_CHANCE_PARAMETERS[i], BOOK_CHANCE_PARAMETERS[i + 1], BOOK_CHANCE_PARAMETERS[i + 2], BOOK_CHANCE_PARAMETERS[i + 3], 1);
-        }
-        return level_logistic(prob, level, BOOK_CHANCE_PARAMETERS[i], 0, 1, 0, BOOK_CHANCE_PARAMETERS[i + 1]);
+    public static int maximumBookCostAtLevel(int playerLevel, Random random) {
+        double level = playerLevel * Config.BOOK_ENCHANTMENT_LEVEL_FACTOR;
+        double mean = BOOK_CHANCE_MEAN_INTERCEPT + BOOK_CHANCE_MEAN_SLOPE * level;
+        double std = BOOK_CHANCE_STD_INTERCEPT + BOOK_CHANCE_STD_SLOPE * level;
+        return (int) Math.ceil(random.nextGaussian() * std + mean);
     }
 
     public static double enchantDamageChance(int playerLevel) {
@@ -68,6 +64,7 @@ public class ModifiedEnchantingHelper {
         Set<Enchantment> attemptedEnchantments = new HashSet<>();
         List<EnchantmentLevelEntry> selectedEnchantments = new LinkedList<>();
         int accumulatedCost = 0;
+        int maxCost = maximumBookCostAtLevel(playerLevel, random);
         while (remainingBooks.size() > 0) {
             StoredBook book = remainingBooks.remove(random.nextInt(remainingBooks.size()));
             Map<Enchantment, Integer> enchantments = new HashMap<>();
@@ -88,7 +85,7 @@ public class ModifiedEnchantingHelper {
                 if (enchantment.getKey().isTreasure() && !enchantment.getKey().isCursed()) enchCost += 1;
                 cost = Math.max(cost, enchCost);
             }
-            if (random.nextDouble() > bookApplyChancePerEnchantmentLevel(cost + accumulatedCost, playerLevel)) continue;
+            if (accumulatedCost > maxCost) break;
             accumulatedCost += cost;
             attemptedEnchantments.addAll(enchantments.keySet());
             enchantments.entrySet().stream().map(e -> new EnchantmentLevelEntry(e.getKey(), e.getValue())).forEach(selectedEnchantments::add);
@@ -97,10 +94,6 @@ public class ModifiedEnchantingHelper {
             }
         }
         return new Pair<>(selectedEnchantments, consumedBooks);
-    }
-
-    private static double level_logistic(double x, double l, double L, double l_m, double k, double x0, double e) {
-        return (l_m * l + L) / (e + Math.exp(k * (x - x0)));
     }
 
     public record StoredBook(BlockPos bookshelfPos, int slot, Map<Enchantment, Integer> enchantments) {

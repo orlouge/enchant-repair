@@ -46,8 +46,10 @@ public class Config {
     public static void load() {
         Properties defaultProps = new Properties();
         defaultProps.setProperty("random_enchanting_penalty", Boolean.toString(RANDOM_ENCHANTMENT_PENALTY));
-        defaultProps.setProperty("random_enchanting_penalty_mean_intercept", Float.toString(RANDOM_ENCHANTMENT_PENALTY_MEAN_INTERCEPT));
-        defaultProps.setProperty("random_enchanting_penalty_mean_slope", Float.toString(RANDOM_ENCHANTMENT_PENALTY_MEAN_SLOPE));
+        float mean30 = RANDOM_ENCHANTMENT_PENALTY_MEAN_INTERCEPT - 30 * RANDOM_ENCHANTMENT_PENALTY_MEAN_SLOPE;
+        float mean70 = RANDOM_ENCHANTMENT_PENALTY_MEAN_INTERCEPT - 70 * RANDOM_ENCHANTMENT_PENALTY_MEAN_SLOPE;
+        defaultProps.setProperty("random_enchanting_penalty_mean_30", Float.toString(mean30));
+        defaultProps.setProperty("random_enchanting_penalty_mean_70", Float.toString(mean70));
         defaultProps.setProperty("random_enchanting_penalty_stddev", Float.toString(RANDOM_ENCHANTMENT_PENALTY_STDDEV));
         defaultProps.setProperty("bookshelf_enchanting_enabled", Boolean.toString(BOOK_ENCHANTMENT_ENABLED));
         defaultProps.setProperty("bookshelf_enchanting_consume_vanishing", Boolean.toString(BOOK_ENCHANTMENT_CONSUME_VANISHING));
@@ -86,8 +88,10 @@ public class Config {
                 props.load(in);
 
                 RANDOM_ENCHANTMENT_PENALTY = Boolean.parseBoolean(props.getProperty("random_enchanting_penalty"));
-                RANDOM_ENCHANTMENT_PENALTY_MEAN_INTERCEPT = Float.parseFloat(props.getProperty("random_enchanting_penalty_mean_intercept"));
-                RANDOM_ENCHANTMENT_PENALTY_MEAN_SLOPE = Float.parseFloat(props.getProperty("random_enchanting_penalty_mean_slope"));
+                float _mean30 = Float.parseFloat(props.getProperty("random_enchanting_penalty_mean_30"));
+                float _mean70 = Float.parseFloat(props.getProperty("random_enchanting_penalty_mean_70"));
+                RANDOM_ENCHANTMENT_PENALTY_MEAN_SLOPE = (_mean30 - _mean70) / 40;
+                RANDOM_ENCHANTMENT_PENALTY_MEAN_INTERCEPT = _mean30 - RANDOM_ENCHANTMENT_PENALTY_MEAN_SLOPE * 30;
                 RANDOM_ENCHANTMENT_PENALTY_STDDEV = Float.parseFloat(props.getProperty("random_enchanting_penalty_stddev"));
                 BOOK_ENCHANTMENT_ENABLED = Boolean.parseBoolean(props.getProperty("bookshelf_enchanting_enabled"));
                 BOOK_ENCHANTMENT_CONSUME_VANISHING = Boolean.parseBoolean(props.getProperty("bookshelf_enchanting_consume_vanishing"));
