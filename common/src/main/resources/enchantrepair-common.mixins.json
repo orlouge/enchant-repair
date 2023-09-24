@@ -13,6 +13,7 @@
     "GrindstoneScreenHandlerMixin",
     "GrindstoneScreenHandlerMixin$ResultSlotMixin",
     "GrindstoneScreenHandlerMixin$SecondSlotMixin",
+    "ItemStackMixin",
     "PlayerEntityMixin",
     "SellEnchantedToolFactory",
     "ServerPlayerEntityMixin"
