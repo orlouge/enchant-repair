@@ -1,0 +1,10 @@
+{
+  "type": "enchantrepair:add_loot_pools",
+  "conditions": [
+    {
+      "condition": "forge:loot_table_id",
+      "loot_table_id": "minecraft:gameplay/hero_of_the_village/librarian_gift"
+    }
+  ],
+  "loot_table": "minecraft:gameplay/hero_of_the_village/librarian_gift"
+ }

@@ -7,6 +7,8 @@
   "mixins": [
     "AnvilScreenHandlerMixin",
     "BookItemMixin",
+    "CreeperEntityMixin",
+    "DrownedEntityMixin",
     "EnchantBookFactoryMixin",
     "EnchantmentScreenHandlerMixin",
     "ExperienceOrbEntityMixin",
@@ -16,7 +18,8 @@
     "ItemStackMixin",
     "PlayerEntityMixin",
     "SellEnchantedToolFactory",
-    "ServerPlayerEntityMixin"
+    "ServerPlayerEntityMixin",
+    "ZombieVillagerEntityMixin"
   ],
   "injectors": {
     "defaultRequire": 1

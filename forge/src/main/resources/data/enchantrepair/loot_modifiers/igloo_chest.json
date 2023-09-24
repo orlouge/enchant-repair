@@ -1,0 +1,10 @@
+{
+  "type": "enchantrepair:add_loot_pools",
+  "conditions": [
+    {
+      "condition": "forge:loot_table_id",
+      "loot_table_id": "minecraft:chests/igloo_chest"
+    }
+  ],
+  "loot_table": "minecraft:chests/igloo_chest"
+ }

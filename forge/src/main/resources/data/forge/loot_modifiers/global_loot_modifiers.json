@@ -1,0 +1,30 @@
+{
+  "replace": false,
+  "entries": [
+    "enchantrepair:village_weaponsmith",
+    "enchantrepair:village_toolsmith",
+    "enchantrepair:village_temple",
+    "enchantrepair:village_fletcher",
+    "enchantrepair:village_armorer",
+    "enchantrepair:ancient_city",
+    "enchantrepair:ancient_city_ice_box",
+    "enchantrepair:abandoned_mineshaft",
+    "enchantrepair:simple_dungeon",
+    "enchantrepair:buried_treasure",
+    "enchantrepair:underwater_ruin_big",
+    "enchantrepair:shipwreck_treasure",
+    "enchantrepair:ruined_portal",
+    "enchantrepair:igloo_chest",
+    "enchantrepair:desert_pyramid",
+    "enchantrepair:jungle_temple",
+    "enchantrepair:pillager_outpost",
+    "enchantrepair:woodland_mansion",
+    "enchantrepair:end_city_treasure",
+    "enchantrepair:bastion_treasure",
+    "enchantrepair:nether_bridge",
+    "enchantrepair:stronghold_library",
+    "enchantrepair:librarian_gift",
+    "enchantrepair:piglin_bartering",
+    "enchantrepair:treasure"
+  ]
+}

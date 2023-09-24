@@ -4,7 +4,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Properties;
+import java.util.Set;
 
 public class Config {
     public static boolean RANDOM_ENCHANTMENT_PENALTY = true;
@@ -43,6 +46,12 @@ public class Config {
     public static boolean CURSE_TRADED_BOOKS = true;
     public static boolean CURSE_TRADED_TOOLS = true;
 
+    public static boolean CHARGED_CREEPER_DROPS_BLAST_PROT = true;
+    public static boolean DROWNED_SPAWNS_WITH_LOYALTY = true;
+    public static boolean ZOMBIE_LIBRARIAN_SPAWNS_WITH_SWEEPING = true;
+    public static boolean LOOT_TABLE_MODIFICATION_DISABLED = false;
+    public static Set<String> LOOT_TABLE_MODIFICATION_BLACKLIST = new HashSet<>();
+
     public static void load() {
         Properties defaultProps = new Properties();
         defaultProps.setProperty("random_enchanting_penalty", Boolean.toString(RANDOM_ENCHANTMENT_PENALTY));
@@ -79,6 +88,12 @@ public class Config {
 
         defaultProps.setProperty("curse_traded_books", Boolean.toString(CURSE_TRADED_BOOKS));
         defaultProps.setProperty("curse_traded_tools", Boolean.toString(CURSE_TRADED_TOOLS));
+
+        defaultProps.setProperty("charged_creeper_drops_blast_prot", Boolean.toString(CHARGED_CREEPER_DROPS_BLAST_PROT));
+        defaultProps.setProperty("drowned_spawns_with_loyalty", Boolean.toString(DROWNED_SPAWNS_WITH_LOYALTY));
+        defaultProps.setProperty("zombie_librarian_spawns_with_sweeping", Boolean.toString(ZOMBIE_LIBRARIAN_SPAWNS_WITH_SWEEPING));
+        defaultProps.setProperty("loot_table_modification_blacklist", String.join(",", LOOT_TABLE_MODIFICATION_BLACKLIST));
+        defaultProps.setProperty("loot_table_modification_disabled", Boolean.toString(LOOT_TABLE_MODIFICATION_DISABLED));
 
 
         File f = new File(EnchantRepairMod.CONFIG_FNAME);
@@ -122,6 +137,12 @@ public class Config {
 
                 CURSE_TRADED_BOOKS = Boolean.parseBoolean(props.getProperty("curse_traded_books"));
                 CURSE_TRADED_TOOLS = Boolean.parseBoolean(props.getProperty("curse_traded_tools"));
+
+                CHARGED_CREEPER_DROPS_BLAST_PROT = Boolean.parseBoolean(props.getProperty("charged_creeper_drops_blast_prot"));
+                DROWNED_SPAWNS_WITH_LOYALTY = Boolean.parseBoolean(props.getProperty("drowned_spawns_with_loyalty"));
+                ZOMBIE_LIBRARIAN_SPAWNS_WITH_SWEEPING = Boolean.parseBoolean(props.getProperty("zombie_librarian_spawns_with_sweeping"));
+                LOOT_TABLE_MODIFICATION_BLACKLIST = new HashSet<>(List.of(props.getProperty("loot_table_modification_blacklist").split(",")));
+                LOOT_TABLE_MODIFICATION_DISABLED = Boolean.parseBoolean(props.getProperty("loot_table_modification_disabled"));
             } catch (IOException e) {
                 e.printStackTrace();
             }
