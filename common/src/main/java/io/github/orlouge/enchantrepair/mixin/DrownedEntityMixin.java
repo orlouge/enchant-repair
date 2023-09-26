@@ -34,7 +34,7 @@ public class DrownedEntityMixin extends ZombieEntity {
     public void equipLoyalty(Random random, LocalDifficulty localDifficulty, CallbackInfo ci) {
         if (Config.DROWNED_SPAWNS_WITH_LOYALTY && random.nextInt(5) == 0) {
             ItemStack book = new ItemStack(Items.ENCHANTED_BOOK);
-            EnchantmentHelper.set(Map.of(Enchantments.SWEEPING, random.nextInt(3) + 1), book);
+            EnchantmentHelper.set(Map.of(Enchantments.LOYALTY, random.nextInt(3) + 1), book);
             this.equipStack(EquipmentSlot.OFFHAND, book);
             this.updateDropChances(EquipmentSlot.OFFHAND);
         }

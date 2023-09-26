@@ -30,9 +30,9 @@ public class ModifiedLootTables {
             chestBook("ancient_city_ice_box", Enchantments.FROST_WALKER, 2, 2, 100),
             chestPool("abandoned_mineshaft", randomPool(List.of(
                     book(Enchantments.FORTUNE, 1, 2, 20),
-                    book(Enchantments.EFFICIENCY, 1, 4, 40),
-                    book(Enchantments.BANE_OF_ARTHROPODS, 1, 5, 20)
-            ), 20, 1)),
+                    book(Enchantments.EFFICIENCY, 1, 4, 20),
+                    book(Enchantments.BANE_OF_ARTHROPODS, 1, 5, 30)
+            ), 30, 1)),
             chestPool("simple_dungeon", randomPool(List.of(
                     book(Enchantments.SILK_TOUCH, 1, 1, 20),
                     book(Enchantments.AQUA_AFFINITY, 1, 1, 20),
@@ -40,8 +40,9 @@ public class ModifiedLootTables {
             ), 10, 1)),
             chestPool("buried_treasure", randomPool(List.of(
                     book(Enchantments.RESPIRATION, 3, 3, 30),
-                    book(Enchantments.LUCK_OF_THE_SEA, 1, 3, 40)
-            ), 30, 1)),
+                    book(Enchantments.LUCK_OF_THE_SEA, 1, 3, 40),
+                    book(Enchantments.CHANNELING, 1, 1, 20)
+            ), 10, 1)),
             chestPool("underwater_ruin_big", randomPool(List.of(
                     book(Enchantments.IMPALING, 1, 5, 50),
                     book(Enchantments.DEPTH_STRIDER, 1, 3, 30)
@@ -83,7 +84,7 @@ public class ModifiedLootTables {
             ), 40, 2)),
             chestPool("nether_bridge", randomPool(List.of(
                     book(Enchantments.FIRE_ASPECT, 1, 2, 5),
-                    book(Enchantments.FIRE_PROTECTION, 4, 5, 5),
+                    book(Enchantments.FIRE_PROTECTION, 3, 5, 5),
                     book(Enchantments.FLAME, 1, 2, 5)
             ), 85, 2)),
             chestPool("stronghold_library", randomPool(List.of(
@@ -99,7 +100,7 @@ public class ModifiedLootTables {
                     book(Enchantments.KNOCKBACK, 1, 2, 500),
                     book(Enchantments.SWEEPING, 3, 3, 25),
                     book(Enchantments.MENDING, 1, 1, 5),
-                    book(Enchantments.SWIFT_SNEAK, 3, 3, 10)
+                    book(Enchantments.SWIFT_SNEAK, 1, 3, 10)
             ), 99460, 1)),
             pool("gameplay/fishing/treasure", randomPool(List.of(
                     book(Enchantments.LOYALTY, 1, 3, 1),
