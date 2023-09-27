@@ -130,8 +130,8 @@ public abstract class AnvilScreenHandlerMixin extends ForgingScreenHandler {
 
 
     @Override
-    public ItemStack quickMove(PlayerEntity player, int slotidx) {
-        if (!this.modifiersApplied && slotidx == this.getResultSlotIndex()) {
+    public ItemStack transferSlot(PlayerEntity player, int slotidx) {
+        if (!this.modifiersApplied && slotidx == ForgingScreenHandler.OUTPUT_SLOT_INDEX) {
             Slot slot = this.getSlot(slotidx);
             if (slot != null) {
                 ItemStack stack = slot.getStack();
@@ -140,7 +140,7 @@ public abstract class AnvilScreenHandlerMixin extends ForgingScreenHandler {
                 this.modifiersApplied = true;
             }
         }
-        return super.quickMove(player, slotidx);
+        return super.transferSlot(player, slotidx);
     }
 
     @Inject(method = "onTakeOutput", at = @At("HEAD"))

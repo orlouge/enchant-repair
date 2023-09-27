@@ -1,8 +1,8 @@
 package io.github.orlouge.enchantrepair;
 
-import net.minecraft.block.ChiseledBookshelfBlock;
+import net.minecraft.block.BarrelBlock;
 import net.minecraft.block.EnchantingTableBlock;
-import net.minecraft.block.entity.ChiseledBookshelfBlockEntity;
+import net.minecraft.block.entity.BarrelBlockEntity;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.enchantment.EnchantmentLevelEntry;
@@ -41,9 +41,9 @@ public class ModifiedEnchantingHelper {
 
     public static Collection<StoredBook> getAvailableEnchantedBooks(World world, BlockPos tablePos) {
         List<StoredBook> books = new LinkedList<>();
-        for (BlockPos offset : EnchantingTableBlock.POWER_PROVIDER_OFFSETS) {
+        for (BlockPos offset : EnchantingTableBlock.BOOKSHELF_OFFSETS) {
             BlockPos pos = tablePos.add(offset);
-            if (world.getBlockState(pos).getBlock() instanceof ChiseledBookshelfBlock && world.getBlockEntity(pos) instanceof ChiseledBookshelfBlockEntity entity) {
+            if (world.getBlockState(pos).getBlock() instanceof BarrelBlock && world.getBlockEntity(pos) instanceof BarrelBlockEntity entity) {
                 for (int slot = 0; slot < entity.size(); slot++) {
                     ItemStack itemStack = entity.getStack(slot);
                     if (itemStack != null && !itemStack.isEmpty() && itemStack.isOf(Items.ENCHANTED_BOOK)) {

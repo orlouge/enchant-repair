@@ -3,7 +3,7 @@ package io.github.orlouge.enchantrepair.mixin;
 import io.github.orlouge.enchantrepair.Config;
 import io.github.orlouge.enchantrepair.ModifiedEnchantingHelper;
 import net.minecraft.block.Blocks;
-import net.minecraft.block.entity.ChiseledBookshelfBlockEntity;
+import net.minecraft.block.entity.BarrelBlockEntity;
 import net.minecraft.enchantment.EnchantmentLevelEntry;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -62,7 +62,7 @@ public abstract class EnchantmentScreenHandlerMixin extends ScreenHandler {
 
     private static void consumeBooks(World world, Collection<ModifiedEnchantingHelper.StoredBook> consumedBooks) {
         for (ModifiedEnchantingHelper.StoredBook book : consumedBooks) {
-            if (world.getBlockEntity(book.bookshelfPos()) instanceof ChiseledBookshelfBlockEntity entity) {
+            if (world.getBlockEntity(book.bookshelfPos()) instanceof BarrelBlockEntity entity) {
                 ItemStack stack = entity.getStack(book.slot());
                 if (stack.isEmpty() || !stack.isOf(Items.ENCHANTED_BOOK)) {
                     continue;
@@ -74,8 +74,8 @@ public abstract class EnchantmentScreenHandlerMixin extends ScreenHandler {
                     entity.removeStack(book.slot());
                 }
                 world.emitGameEvent(GameEvent.BLOCK_CHANGE, book.bookshelfPos(), new GameEvent.Emitter(null, null));
-                world.updateComparators(book.bookshelfPos(), Blocks.CHISELED_BOOKSHELF);
-                world.playSound(null, book.bookshelfPos(), SoundEvents.BLOCK_CHISELED_BOOKSHELF_PICKUP_ENCHANTED, SoundCategory.BLOCKS, 1.0F, 1.0F);
+                world.updateComparators(book.bookshelfPos(), Blocks.BARREL);
+                world.playSound(null, book.bookshelfPos(), SoundEvents.BLOCK_BARREL_OPEN, SoundCategory.BLOCKS, 1.0F, 1.0F);
             }
         }
     }
