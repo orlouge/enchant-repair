@@ -59,7 +59,9 @@ public abstract class AnvilScreenHandlerMixin extends ForgingScreenHandler {
 
     @Inject(method = "updateResult", at = @At(value = "INVOKE", shift = At.Shift.BEFORE, target = "Lnet/minecraft/screen/AnvilScreenHandler;sendContentUpdates()V"))
     public void modifyResult(CallbackInfo ci) {
-        this.levelCost.set(0);
+        if (Config.DISABLE_ANVIL_XP_COST) {
+            this.levelCost.set(0);
+        }
     }
 
     @Redirect(method = "updateResult", at = @At(value = "INVOKE", target = "Ljava/lang/Math;min(II)I", ordinal = 0))
