@@ -4,7 +4,6 @@ import io.github.orlouge.enchantrepair.Config;
 import io.github.orlouge.enchantrepair.ModifiedGrindstoneHelper;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -58,7 +57,7 @@ public abstract class GrindstoneScreenHandlerMixin extends ScreenHandler {
         if (book.isOf(Items.BOOK)) {
             ItemStack result = ItemStack.EMPTY;
             if (!tool.isEmpty() && !book.isEmpty() && !book.hasNbt() && tool.getCount() == 1 && tool.hasEnchantments()) {
-                Map<Enchantment, Integer> transfer = ModifiedGrindstoneHelper.extractEnchantments(tool, true);
+                Map<Enchantment, Integer> transfer = ModifiedGrindstoneHelper.filterEnchantments(tool, false, true, false);
                 if (transfer != null && transfer.size() > 0) {
                     result = new ItemStack(Items.ENCHANTED_BOOK);
                     EnchantmentHelper.set(transfer, result);
