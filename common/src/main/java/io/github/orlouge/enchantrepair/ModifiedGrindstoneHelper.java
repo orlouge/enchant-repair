@@ -2,6 +2,7 @@ package io.github.orlouge.enchantrepair;
 
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.enchantment.Enchantments;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 
@@ -10,15 +11,19 @@ import java.util.Map;
 import java.util.Optional;
 
 public class ModifiedGrindstoneHelper {
-    public static Map<Enchantment, Integer> extractEnchantments(ItemStack tool, boolean treasure) {
+    public static Map<Enchantment, Integer> filterEnchantments(ItemStack tool, boolean normal, boolean treasure, boolean curse) {
         Map<Enchantment, Integer> enchantments = EnchantmentHelper.get(tool), extracted = new LinkedHashMap<>();
         for (Map.Entry<Enchantment, Integer> enchEntry : enchantments.entrySet()) {
             if (enchEntry.getValue() == 0) continue;
-            if (enchEntry.getKey().isCursed()) {
+            if (enchEntry.getKey() == Enchantments.VANISHING_CURSE) {
                 return null;
             }
-            if (enchEntry.getKey().isTreasure() == treasure) {
-                extracted.put(enchEntry.getKey(), enchEntry.getValue());
+            if (enchEntry.getKey().isCursed()) {
+                if (curse) extracted.put(enchEntry.getKey(), enchEntry.getValue());
+            } else if (enchEntry.getKey().isTreasure()) {
+                if (treasure) extracted.put(enchEntry.getKey(), enchEntry.getValue());
+            } else {
+                if (normal) extracted.put(enchEntry.getKey(), enchEntry.getValue());
             }
         }
         return extracted;
@@ -27,13 +32,9 @@ public class ModifiedGrindstoneHelper {
     public static Optional<ItemStack> modifyTopSlot(ItemStack top, ItemStack bottom) {
         if (Config.GRINDSTONE_EXTRACT_TREASURE && bottom.isOf(Items.BOOK)) {
             ItemStack disenchantedTool = top.copy();
-            Map<Enchantment, Integer> keptEnchantments = extractEnchantments(disenchantedTool, false);
+            Map<Enchantment, Integer> keptEnchantments = filterEnchantments(disenchantedTool, Config.GRINDSTONE_EXTRACT_KEEP_NON_TREASURE, false, true);
             if (keptEnchantments != null) {
-                if (Config.GRINDSTONE_EXTRACT_KEEP_NON_TREASURE) {
-                    EnchantmentHelper.set(keptEnchantments, disenchantedTool);
-                } else {
-                    EnchantmentHelper.set(new LinkedHashMap<>(), disenchantedTool);
-                }
+                EnchantmentHelper.set(keptEnchantments, disenchantedTool);
                 return Optional.of(disenchantedTool);
             }
         }

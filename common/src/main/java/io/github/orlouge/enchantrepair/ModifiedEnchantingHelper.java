@@ -62,6 +62,7 @@ public class ModifiedEnchantingHelper {
         List<StoredBook> remainingBooks = new ArrayList<>(books);
         List<StoredBook> consumedBooks = new LinkedList<>();
         Set<Enchantment> attemptedEnchantments = new HashSet<>();
+        Map<Enchantment, Integer> preexistingEnchantments = EnchantmentHelper.get(item);
         List<EnchantmentLevelEntry> selectedEnchantments = new LinkedList<>();
         int accumulatedCost = 0;
         int maxCost = maximumBookCostAtLevel(playerLevel, random);
@@ -70,8 +71,8 @@ public class ModifiedEnchantingHelper {
             Map<Enchantment, Integer> enchantments = new HashMap<>();
             boolean invalid = false;
             for (Map.Entry<Enchantment, Integer> enchantment : book.enchantments.entrySet()) {
-                if (!enchantment.getKey().isAcceptableItem(item)) continue;
-                if (attemptedEnchantments.contains(enchantment.getKey()) || selectedEnchantments.stream().anyMatch(e2 -> !enchantment.getKey().canCombine(e2.enchantment))) {
+                if (!enchantment.getKey().isAcceptableItem(item) || preexistingEnchantments.containsKey(enchantment.getKey())) continue;
+                if (attemptedEnchantments.contains(enchantment.getKey()) ||selectedEnchantments.stream().anyMatch(e2 -> !enchantment.getKey().canCombine(e2.enchantment))) {
                     invalid = true;
                     break;
                 }
