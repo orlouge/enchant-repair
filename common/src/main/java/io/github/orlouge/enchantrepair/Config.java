@@ -1,13 +1,16 @@
 package io.github.orlouge.enchantrepair;
 
+import net.minecraft.item.Item;
+import net.minecraft.item.Items;
+import net.minecraft.util.registry.Registry;
+import net.minecraft.util.Identifier;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Properties;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class Config {
     public static boolean RANDOM_ENCHANTMENT_PENALTY = true;
@@ -17,6 +20,7 @@ public class Config {
     public static boolean BOOK_ENCHANTMENT_ENABLED = true;
     public static boolean BOOK_ENCHANTMENT_CONSUME_VANISHING = true;
     public static boolean BOOK_ENCHANTMENT_CONSUME_TREASURE = true;
+    public static boolean BOOK_ENCHANTMENT_CONSUME_NONTREASURE = false;
     public static double BOOK_ENCHANTMENT_LEVEL_FACTOR = 1;
     public static double ENCHANT_DAMAGE_CHANCE = 5;
 
@@ -33,6 +37,7 @@ public class Config {
     public static boolean DISABLE_ANVIL_XP_COST = true;
     public static boolean REPAIR_CHEAP = true;
     public static boolean REPAIR_VANISHING = false;
+    public static Map<Item, Set<Item>> REPAIR_EXTRA_ITEMS = Map.of(Items.TRIDENT, Set.of(Items.PRISMARINE_CRYSTALS), Items.SHIELD, Set.of(Items.IRON_INGOT));
 
     public static int XP_LEVELS_LOST_ON_DEATH = 1;
     public static float XP_LOST_DROPPED = 50f;
@@ -63,6 +68,7 @@ public class Config {
         defaultProps.setProperty("bookshelf_enchanting_enabled", Boolean.toString(BOOK_ENCHANTMENT_ENABLED));
         defaultProps.setProperty("bookshelf_enchanting_consume_vanishing", Boolean.toString(BOOK_ENCHANTMENT_CONSUME_VANISHING));
         defaultProps.setProperty("bookshelf_enchanting_consume_treasure", Boolean.toString(BOOK_ENCHANTMENT_CONSUME_TREASURE));
+        defaultProps.setProperty("bookshelf_enchanting_consume_nontreasure", Boolean.toString(BOOK_ENCHANTMENT_CONSUME_NONTREASURE));
         defaultProps.setProperty("bookshelf_enchanting_level_factor", Double.toString(BOOK_ENCHANTMENT_LEVEL_FACTOR));
         defaultProps.setProperty("enchanting_damage_chance", Double.toString(ENCHANT_DAMAGE_CHANCE));
         defaultProps.setProperty("enchanting_disable_book", Boolean.toString(DISABLE_ENCHANTING_BOOKS));
@@ -77,6 +83,11 @@ public class Config {
         defaultProps.setProperty("anvil_repair_cheap", Boolean.toString(REPAIR_CHEAP));
         defaultProps.setProperty("anvil_repair_vanishing", Boolean.toString(REPAIR_VANISHING));
         defaultProps.setProperty("anvil_disable_xp_cost", Boolean.toString(DISABLE_ANVIL_XP_COST));
+        defaultProps.setProperty("anvil_repair_extra_items",
+                REPAIR_EXTRA_ITEMS.entrySet().stream().map(
+                        entry -> Registry.ITEM.getId(entry.getKey()) + "+" + entry.getValue().stream().map(i -> Registry.ITEM.getId(i) + "").collect(Collectors.joining("+"))
+                ).collect(Collectors.joining("|"))
+        );
 
         defaultProps.setProperty("xp_levels_lost_on_death", Integer.toString(XP_LEVELS_LOST_ON_DEATH));
         defaultProps.setProperty("xp_lost_dropped", Float.toString(XP_LOST_DROPPED));
@@ -111,6 +122,7 @@ public class Config {
                 BOOK_ENCHANTMENT_ENABLED = Boolean.parseBoolean(props.getProperty("bookshelf_enchanting_enabled"));
                 BOOK_ENCHANTMENT_CONSUME_VANISHING = Boolean.parseBoolean(props.getProperty("bookshelf_enchanting_consume_vanishing"));
                 BOOK_ENCHANTMENT_CONSUME_TREASURE = Boolean.parseBoolean(props.getProperty("bookshelf_enchanting_consume_treasure"));
+                BOOK_ENCHANTMENT_CONSUME_NONTREASURE = Boolean.parseBoolean(props.getProperty("bookshelf_enchanting_consume_nontreasure"));
                 BOOK_ENCHANTMENT_LEVEL_FACTOR = Double.parseDouble(props.getProperty("bookshelf_enchanting_level_factor"));
                 ENCHANT_DAMAGE_CHANCE = Double.parseDouble(props.getProperty("enchanting_damage_chance"));
                 DISABLE_ENCHANTING_XP_COST = Boolean.parseBoolean(props.getProperty("enchanting_disable_xp_cost"));
@@ -125,6 +137,15 @@ public class Config {
                 REPAIR_CHEAP = Boolean.parseBoolean(props.getProperty("anvil_repair_cheap"));
                 REPAIR_VANISHING = Boolean.parseBoolean(props.getProperty("anvil_repair_vanishing"));
                 DISABLE_ANVIL_XP_COST = Boolean.parseBoolean(props.getProperty("anvil_disable_xp_cost"));
+                REPAIR_EXTRA_ITEMS = Arrays.stream(props.getProperty("anvil_repair_extra_items").split("\\|")).map(entry -> {
+                    String[] splitEntry = entry.split("\\+");
+                    Set<Item> items = new HashSet<>();
+                    for (int i = 1; i < splitEntry.length; i++) {
+                        String item = splitEntry[i];
+                        items.add(Registry.ITEM.get(new Identifier(item)));
+                    }
+                    return Map.entry(Registry.ITEM.get(new Identifier(splitEntry[0])), items);
+                }).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
                 XP_LEVELS_LOST_ON_DEATH = Integer.parseInt(props.getProperty("xp_levels_lost_on_death"));
                 XP_LOST_DROPPED = Float.parseFloat(props.getProperty("xp_lost_dropped"));
