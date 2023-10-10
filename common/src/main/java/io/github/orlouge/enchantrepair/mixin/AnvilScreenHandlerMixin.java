@@ -6,6 +6,7 @@ import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.screen.*;
 import net.minecraft.screen.slot.Slot;
@@ -27,6 +28,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.BiConsumer;
 
 @Mixin(AnvilScreenHandler.class)
@@ -48,7 +50,7 @@ public abstract class AnvilScreenHandlerMixin extends ForgingScreenHandler {
         ItemStack repair = this.input.getStack(1);
         boolean isRepairing = !repair.isEmpty();
         boolean nonDisposable = Config.REPAIR_VANISHING || EnchantmentHelper.getLevel(Enchantments.VANISHING_CURSE, input) <= 0;
-        boolean repairable = input.isDamageable() && input.getItem().canRepair(input, repair) && nonDisposable;
+        boolean repairable = input.isDamageable() && this.canRepairExtended(input.getItem(), input, repair) && nonDisposable;
         boolean mergeable = (this.player.isCreative() && Config.ALLOW_CREATIVE_ANVIL_MERGE) || Config.ALLOW_SURVIVAL_ANVIL_MERGE;
         if (isRepairing && !repairable && !mergeable) {
             this.output.setStack(0, ItemStack.EMPTY);
@@ -67,6 +69,13 @@ public abstract class AnvilScreenHandlerMixin extends ForgingScreenHandler {
     @Redirect(method = "updateResult", at = @At(value = "INVOKE", target = "Ljava/lang/Math;min(II)I", ordinal = 0))
     public int calculateRepairAmount(int dmg, int maxDmg4) {
         return Config.REPAIR_CHEAP ? dmg : Math.min(dmg, maxDmg4);
+    }
+
+    @Redirect(method = "updateResult", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/Item;canRepair(Lnet/minecraft/item/ItemStack;Lnet/minecraft/item/ItemStack;)Z"))
+    public boolean canRepairExtended(Item item, ItemStack stack, ItemStack ingredient) {
+        if (item.canRepair(stack, ingredient)) return true;
+        Set<Item> extraRepairItems = Config.REPAIR_EXTRA_ITEMS.get(item);
+        return extraRepairItems != null && extraRepairItems.contains(ingredient.getItem());
     }
 
     @Inject(method = "getNextCost", at = @At("HEAD"), cancellable = true)
@@ -91,7 +100,7 @@ public abstract class AnvilScreenHandlerMixin extends ForgingScreenHandler {
         this.isRename = item2.isEmpty();
         if (this.repairItemUsage <= 0) return;
         ItemStack item1 = this.input.getStack(0);
-        if (!item1.isEmpty() && !item2.isEmpty() && item1.getItem().canRepair(item1, item2)) {
+        if (!item1.isEmpty() && !item2.isEmpty() && this.canRepairExtended(item1.getItem(), item1, item2)) {
             boolean hasMending = EnchantmentHelper.getLevel(Enchantments.MENDING, item1) > 0;
             float consumeChance = 0.3f * Config.REPAIR_CONSUME_CHANCE / Math.max(1, player.experienceLevel);
             float failChance = 9f * Config.REPAIR_FAIL_CHANCE / Math.max(1, player.experienceLevel * player.experienceLevel);

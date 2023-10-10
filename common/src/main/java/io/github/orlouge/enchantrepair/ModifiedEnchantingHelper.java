@@ -72,13 +72,13 @@ public class ModifiedEnchantingHelper {
             boolean invalid = false;
             for (Map.Entry<Enchantment, Integer> enchantment : book.enchantments.entrySet()) {
                 if (!enchantment.getKey().isAcceptableItem(item) || preexistingEnchantments.containsKey(enchantment.getKey())) continue;
-                if (attemptedEnchantments.contains(enchantment.getKey()) ||selectedEnchantments.stream().anyMatch(e2 -> !enchantment.getKey().canCombine(e2.enchantment))) {
+                if (attemptedEnchantments.contains(enchantment.getKey()) || selectedEnchantments.stream().anyMatch(e2 -> !enchantment.getKey().canCombine(e2.enchantment))) {
                     invalid = true;
                     break;
                 }
                 enchantments.put(enchantment.getKey(), enchantment.getValue());
             }
-            if (invalid) continue;
+            if (invalid || enchantments.size() == 0) continue;
             int cost = 0;
             for (Map.Entry<Enchantment, Integer> enchantment : enchantments.entrySet()) {
                 int enchCost = 0;
@@ -99,7 +99,7 @@ public class ModifiedEnchantingHelper {
 
     public record StoredBook(BlockPos bookshelfPos, int slot, Map<Enchantment, Integer> enchantments) {
         public boolean consume() {
-            return this.enchantments.keySet().stream().anyMatch(e -> (Config.BOOK_ENCHANTMENT_CONSUME_VANISHING && e.equals(Enchantments.VANISHING_CURSE)) || (Config.BOOK_ENCHANTMENT_CONSUME_TREASURE && e.isTreasure()));
+            return this.enchantments.keySet().stream().anyMatch(e -> (Config.BOOK_ENCHANTMENT_CONSUME_VANISHING && e.equals(Enchantments.VANISHING_CURSE)) || (Config.BOOK_ENCHANTMENT_CONSUME_TREASURE && e.isTreasure()) || (Config.BOOK_ENCHANTMENT_CONSUME_NONTREASURE && !e.isTreasure()));
         }
     }
 }
