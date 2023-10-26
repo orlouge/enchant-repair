@@ -18,9 +18,9 @@ import java.util.*;
 
 public class ModifiedEnchantingHelper {
     public static final double BOOK_CHANCE_MEAN_INTERCEPT = 0;
-    public static final double BOOK_CHANCE_MEAN_SLOPE = 0.4;
+    public static final double BOOK_CHANCE_MEAN_SLOPE = 0.28;
     public static final double BOOK_CHANCE_STD_INTERCEPT = 0.75;
-    public static final double BOOK_CHANCE_STD_SLOPE = 0.175;
+    public static final double BOOK_CHANCE_STD_SLOPE = 0.125;
 
     public static int randomEnchantmentLevelPenalty(int maxLevel, int playerLevel, Random random) {
         if (!Config.RANDOM_ENCHANTMENT_PENALTY) return 0;
@@ -36,7 +36,7 @@ public class ModifiedEnchantingHelper {
     }
 
     public static double enchantDamageChance(int playerLevel) {
-        return Math.min(Config.ENCHANT_DAMAGE_CHANCE * 0.1, (double) 9 * Config.ENCHANT_DAMAGE_CHANCE / Math.max(1, playerLevel * playerLevel));
+        return Math.min(Config.ENCHANT_DAMAGE_CHANCE * 0.1, 0.3 * Config.ENCHANT_DAMAGE_CHANCE / Math.max(1, playerLevel));
     }
 
     public static Collection<StoredBook> getAvailableEnchantedBooks(World world, BlockPos tablePos) {

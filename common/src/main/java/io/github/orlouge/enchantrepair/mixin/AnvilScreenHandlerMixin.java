@@ -102,25 +102,29 @@ public abstract class AnvilScreenHandlerMixin extends ForgingScreenHandler {
         ItemStack item1 = this.input.getStack(0);
         if (!item1.isEmpty() && !item2.isEmpty() && this.canRepairExtended(item1.getItem(), item1, item2)) {
             boolean hasMending = EnchantmentHelper.getLevel(Enchantments.MENDING, item1) > 0;
-            float consumeChance = 0.3f * Config.REPAIR_CONSUME_CHANCE / Math.max(1, player.experienceLevel);
-            float failChance = 9f * Config.REPAIR_FAIL_CHANCE / Math.max(1, player.experienceLevel * player.experienceLevel);
+            float levelScaled = (float) Math.max(1, player.experienceLevel * Math.sqrt(player.experienceLevel));
+            float consumeChance = 1.65f * Config.REPAIR_CONSUME_CHANCE / levelScaled;
+            float failChance = Config.REPAIR_CONSUME_CHANCE > 0 ? Config.REPAIR_FAIL_CHANCE / Config.REPAIR_CONSUME_CHANCE : 0f;
             if (hasMending) consumeChance *= 0.7;
-            if (player.getRandom().nextFloat() > consumeChance) {
+            int nonConsumed = (int) (Math.log(player.getRandom().nextFloat()) / Math.log(1 - consumeChance));
+            if (this.repairItemUsage <= nonConsumed) {
                 this.savedSecondItem = item2.copy();
-            } else if (Config.REPAIR_FAIL_CHANCE > 0) {
-                if (consumeChance > 0) failChance /= consumeChance;
-                if (hasMending) failChance *= 0.3;
-                failChance = Math.min(0.3f, failChance);
-                if (player.getRandom().nextFloat() < failChance) {
-                    result.setDamage(result.getMaxDamage() - 1);
-                    this.context.run((world, pos) -> world.playSound(null, pos,
-                            SoundEvents.ENTITY_ITEM_BREAK, SoundCategory.BLOCKS, 1.5F, 1.2F));
-                    return;
+            } else {
+                this.repairItemUsage -= nonConsumed;
+                if (failChance > 0) {
+                    if (hasMending) failChance *= 0.2;
+                    failChance = Math.min(0.2f, failChance);
+                    if (player.getRandom().nextFloat() < failChance) {
+                        result.setDamage(result.getMaxDamage() - 1);
+                        this.context.run((world, pos) -> world.playSound(null, pos,
+                                SoundEvents.ENTITY_ITEM_BREAK, SoundCategory.BLOCKS, 1.5F, 1.2F));
+                        return;
+                    }
                 }
             }
 
-            float disenchantChance = 9f * Config.REPAIR_DISENCHANT_CHANCE / Math.max(1, player.experienceLevel * player.experienceLevel);
-            if (hasMending) disenchantChance *= 0.3;
+            float disenchantChance = 1.65f * Config.REPAIR_DISENCHANT_CHANCE / levelScaled;
+            if (hasMending) disenchantChance *= 0.2;
             if (failChance > 0) disenchantChance /= failChance;
             disenchantChance = Math.min(0.3f, disenchantChance);
             Map<Enchantment, Integer> enchantments = new LinkedHashMap<>(EnchantmentHelper.get(result));
