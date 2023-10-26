@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 
 public class Config {
     public static boolean RANDOM_ENCHANTMENT_PENALTY = true;
-    public static float RANDOM_ENCHANTMENT_PENALTY_MEAN_INTERCEPT = 11f;
+    public static float RANDOM_ENCHANTMENT_PENALTY_MEAN_INTERCEPT = 13f;
     public static float RANDOM_ENCHANTMENT_PENALTY_MEAN_SLOPE = 0.1f;
     public static float RANDOM_ENCHANTMENT_PENALTY_STDDEV = 3;
     public static boolean BOOK_ENCHANTMENT_ENABLED = true;
@@ -22,20 +22,20 @@ public class Config {
     public static boolean BOOK_ENCHANTMENT_CONSUME_TREASURE = true;
     public static boolean BOOK_ENCHANTMENT_CONSUME_NONTREASURE = false;
     public static double BOOK_ENCHANTMENT_LEVEL_FACTOR = 1;
-    public static double ENCHANT_DAMAGE_CHANCE = 5;
+    public static double ENCHANT_DAMAGE_CHANCE = 10;
 
     public static boolean DISABLE_ENCHANTING_XP_COST = true;
     public static boolean DISABLE_ENCHANTING_BOOKS = true;
 
 
-    public static float REPAIR_CONSUME_CHANCE = 50;
+    public static float REPAIR_CONSUME_CHANCE = 60;
     public static float REPAIR_FAIL_CHANCE = 15;
     public static float REPAIR_DISENCHANT_CHANCE = 15;
     public static boolean ALLOW_CREATIVE_ANVIL_MERGE = true;
     public static boolean ALLOW_SURVIVAL_ANVIL_MERGE = false;
     public static boolean DISABLE_ANVIL_DAMAGE_ON_RENAME = true;
     public static boolean DISABLE_ANVIL_XP_COST = true;
-    public static boolean REPAIR_CHEAP = true;
+    public static boolean REPAIR_CHEAP = false;
     public static boolean REPAIR_VANISHING = false;
     public static Map<Item, Set<Item>> REPAIR_EXTRA_ITEMS = Map.of(Items.TRIDENT, Set.of(Items.PRISMARINE_CRYSTALS), Items.SHIELD, Set.of(Items.IRON_INGOT));
 
@@ -80,7 +80,7 @@ public class Config {
         defaultProps.setProperty("anvil_repair_consume_chance", Float.toString(REPAIR_CONSUME_CHANCE));
         defaultProps.setProperty("anvil_repair_fail_chance", Float.toString(REPAIR_FAIL_CHANCE));
         defaultProps.setProperty("anvil_repair_disenchant_chance", Float.toString(REPAIR_DISENCHANT_CHANCE));
-        defaultProps.setProperty("anvil_repair_cheap", Boolean.toString(REPAIR_CHEAP));
+        defaultProps.setProperty("anvil_repair_one_item", Boolean.toString(REPAIR_CHEAP));
         defaultProps.setProperty("anvil_repair_vanishing", Boolean.toString(REPAIR_VANISHING));
         defaultProps.setProperty("anvil_disable_xp_cost", Boolean.toString(DISABLE_ANVIL_XP_COST));
         defaultProps.setProperty("anvil_repair_extra_items",
@@ -134,7 +134,7 @@ public class Config {
                 REPAIR_CONSUME_CHANCE = Float.parseFloat(props.getProperty("anvil_repair_consume_chance"));
                 REPAIR_FAIL_CHANCE = Float.parseFloat(props.getProperty("anvil_repair_fail_chance"));
                 REPAIR_DISENCHANT_CHANCE = Float.parseFloat(props.getProperty("anvil_repair_disenchant_chance"));
-                REPAIR_CHEAP = Boolean.parseBoolean(props.getProperty("anvil_repair_cheap"));
+                REPAIR_CHEAP = Boolean.parseBoolean(props.getProperty("anvil_repair_one_item"));
                 REPAIR_VANISHING = Boolean.parseBoolean(props.getProperty("anvil_repair_vanishing"));
                 DISABLE_ANVIL_XP_COST = Boolean.parseBoolean(props.getProperty("anvil_disable_xp_cost"));
                 REPAIR_EXTRA_ITEMS = Arrays.stream(props.getProperty("anvil_repair_extra_items").split("\\|")).map(entry -> {
