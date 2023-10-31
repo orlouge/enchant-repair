@@ -74,7 +74,7 @@ public abstract class AnvilScreenHandlerMixin extends ForgingScreenHandler {
     @Redirect(method = "updateResult", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/Item;canRepair(Lnet/minecraft/item/ItemStack;Lnet/minecraft/item/ItemStack;)Z"))
     public boolean canRepairExtended(Item item, ItemStack stack, ItemStack ingredient) {
         if (item.canRepair(stack, ingredient)) return true;
-        Set<Item> extraRepairItems = Config.REPAIR_EXTRA_ITEMS.get(item);
+        Set<Item> extraRepairItems = Config.REPAIR_EXTRA_ITEMS.get().get(item);
         return extraRepairItems != null && extraRepairItems.contains(ingredient.getItem());
     }
 
