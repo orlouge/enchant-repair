@@ -4,6 +4,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.Items;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.Lazy;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -37,7 +38,9 @@ public class Config {
     public static boolean DISABLE_ANVIL_XP_COST = true;
     public static boolean REPAIR_CHEAP = false;
     public static boolean REPAIR_VANISHING = false;
-    public static Map<Item, Set<Item>> REPAIR_EXTRA_ITEMS = Map.of(Items.TRIDENT, Set.of(Items.PRISMARINE_CRYSTALS), Items.SHIELD, Set.of(Items.IRON_INGOT));
+    public static Lazy<Map<Item, Set<Item>>> REPAIR_EXTRA_ITEMS = new Lazy<>(
+            () -> Map.of(Items.TRIDENT, Set.of(Items.PRISMARINE_CRYSTALS), Items.SHIELD, Set.of(Items.IRON_INGOT))
+            );
 
     public static int XP_LEVELS_LOST_ON_DEATH = 1;
     public static float XP_LOST_DROPPED = 50f;
@@ -137,7 +140,8 @@ public class Config {
                 REPAIR_CHEAP = Boolean.parseBoolean(props.getProperty("anvil_repair_one_item"));
                 REPAIR_VANISHING = Boolean.parseBoolean(props.getProperty("anvil_repair_vanishing"));
                 DISABLE_ANVIL_XP_COST = Boolean.parseBoolean(props.getProperty("anvil_disable_xp_cost"));
-                REPAIR_EXTRA_ITEMS = Arrays.stream(props.getProperty("anvil_repair_extra_items").split("\\|")).map(entry -> {
+                String[] anvilRepairExtraItems = props.getProperty("anvil_repair_extra_items").split("\\|");
+                REPAIR_EXTRA_ITEMS = new Lazy<>(() -> Arrays.stream(anvilRepairExtraItems).map(entry -> {
                     String[] splitEntry = entry.split("\\+");
                     Set<Item> items = new HashSet<>();
                     for (int i = 1; i < splitEntry.length; i++) {
@@ -145,7 +149,7 @@ public class Config {
                         items.add(Registry.ITEM.get(new Identifier(item)));
                     }
                     return Map.entry(Registry.ITEM.get(new Identifier(splitEntry[0])), items);
-                }).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+                }).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)));
 
                 XP_LEVELS_LOST_ON_DEATH = Integer.parseInt(props.getProperty("xp_levels_lost_on_death"));
                 XP_LOST_DROPPED = Float.parseFloat(props.getProperty("xp_lost_dropped"));
