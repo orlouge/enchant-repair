@@ -7,6 +7,7 @@ import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.Item;
+import net.minecraft.item.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.screen.*;
 import net.minecraft.screen.slot.Slot;
@@ -43,16 +44,15 @@ public abstract class AnvilScreenHandlerMixin extends ForgingScreenHandler {
         super(type, syncId, playerInventory, context);
     }
 
-    //@Inject(method = "updateResult", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/item/ItemStack;isOf(Lnet/minecraft/item/Item;)Z"), cancellable = true)
     @Inject(method = "updateResult", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;copy()Lnet/minecraft/item/ItemStack;"), cancellable = true)
     public void disableMerging(CallbackInfo ci) {
         ItemStack input = this.input.getStack(0);
         ItemStack repair = this.input.getStack(1);
-        boolean isRepairing = !repair.isEmpty();
+        boolean isRepairingOrMerging = !repair.isEmpty() && (input.isDamageable() || input.isOf(Items.ENCHANTED_BOOK));
         boolean nonDisposable = Config.REPAIR_VANISHING || EnchantmentHelper.getLevel(Enchantments.VANISHING_CURSE, input) <= 0;
         boolean repairable = input.isDamageable() && this.canRepairExtended(input.getItem(), input, repair) && nonDisposable;
         boolean mergeable = (this.player.isCreative() && Config.ALLOW_CREATIVE_ANVIL_MERGE) || Config.ALLOW_SURVIVAL_ANVIL_MERGE;
-        if (isRepairing && !repairable && !mergeable) {
+        if (isRepairingOrMerging && !repairable && !mergeable) {
             this.output.setStack(0, ItemStack.EMPTY);
             this.levelCost.set(0);
             ci.cancel();
@@ -86,7 +86,7 @@ public abstract class AnvilScreenHandlerMixin extends ForgingScreenHandler {
         }
     }
 
-    @Inject(method = "canTakeOutput", at = @At("HEAD"), cancellable = true)
+    @Inject(method = "canTakeOutput", at = @At("RETURN"), cancellable = true)
     private void alwaysTakeOutput(PlayerEntity player, boolean present, CallbackInfoReturnable<Boolean> cir) {
         if (Config.DISABLE_ANVIL_XP_COST) {
             cir.setReturnValue(true);
@@ -100,7 +100,7 @@ public abstract class AnvilScreenHandlerMixin extends ForgingScreenHandler {
         this.isRename = item2.isEmpty();
         if (this.repairItemUsage <= 0) return;
         ItemStack item1 = this.input.getStack(0);
-        if (!item1.isEmpty() && !item2.isEmpty() && this.canRepairExtended(item1.getItem(), item1, item2)) {
+        if (!item1.isEmpty() && (item1.isDamageable() || item1.isEnchantable()) && !item2.isEmpty() && this.canRepairExtended(item1.getItem(), item1, item2)) {
             boolean hasMending = EnchantmentHelper.getLevel(Enchantments.MENDING, item1) > 0;
             float levelScaled = (float) Math.max(1, player.experienceLevel * Math.sqrt(player.experienceLevel));
             float consumeChance = 1.65f * Config.REPAIR_CONSUME_CHANCE / levelScaled;
